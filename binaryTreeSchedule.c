@@ -21,6 +21,7 @@ struct tree{
     char data[sizeOfName];//string armazenada
     struct tree *left;    //Folha/Nó da esquerda
     struct tree *right;   //Folha/Nó da direita
+    int  height;
 };
 
 /*
@@ -84,6 +85,22 @@ void printTree(struct tree *thisTree, int l){
     for(int i=0; i<l; ++i) printf("  ");
     printf("%s\n", thisTree->data);
     printTree(thisTree->right, l+1);
+}
+
+struct tree *searchInTree(struct tree *thisTree, char keySearch[sizeOfName]){
+    if (root == NULL || strcmp(keySearch ,root->data) == 0){
+        return thisTree;
+    }
+    if(strcmp(keySearch ,root->data) < 0){
+        return searchInTree(thisTree->left, keySearch);
+    }else{
+        return searchInTree(thisTree->right, keySearch);
+    }
+}
+/*Função que equilibra uma subarvore*/
+void balanceTree(struct tree *root){
+    
+    
 }
 
 struct tree *root;
