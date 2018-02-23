@@ -45,6 +45,7 @@ struct tree *makeTree(struct tree *root, struct tree *thisTree, char *data){
         thisTree->left = NULL;
         thisTree->right = NULL;
         thisTree->root = NULL;
+        thisTree->height =0;
         strcpy(thisTree->data, data);
         //Retorna a subarvore atual como Folha/Nó Raiz, caso ela mesma não possua Raiz
         if(!root) return thisTree;
@@ -149,10 +150,46 @@ struct tree *predecessorNode(struct tree *thisTree){
     return thisTree;
 }
 
+/*Função que gira um nó para direita*/
+void rightRotation(struct tree *thisTree){
+    struct tree *temporaryTree;
+    struct tree *qTree;
+    
+    qTree = thisTree->left;
+    temporaryTree= qTree->right;
+    qTree->right = thisTree;
+    thisTree->left=temporaryTree;
+    thisTree=qTree;
+}
+
+/*Função que gira um nó para esquerda*/
+void leftRotation(struct tree *thisTree){
+    struct tree *temporaryTree;
+    struct tree *qTree;
+    
+    qTree = thisTree->right;
+    temporaryTree= qTree->left;
+    qTree->left = thisTree;
+    thisTree->right=temporaryTree;
+    thisTree=qTree;
+}
+
+/*Função que gira um nó da direita para esquerda*/
+void rightToLeftRotation(struct tree *thisTree){
+   
+    rightRotation(thisTree->right);
+    leftRotation(thisTree);
+}
+
+/*Função que gira um nó da esquerda para direita*/
+void leftToRightRotation(struct tree *thisTree){
+    leftRotation(thisTree->right);
+    rightRotation(thisTree);
+}
 
 /*Função que equilibra uma subarvore*/
 void balanceTree(struct tree *root){
-    
+    //https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
     
 }
 
