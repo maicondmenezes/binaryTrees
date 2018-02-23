@@ -21,6 +21,7 @@ struct tree{
     char data[sizeOfName];//string armazenada
     struct tree *left;    //Folha/Nó da esquerda
     struct tree *right;   //Folha/Nó da direita
+    struct tree *root; //raiz do nó
     int  height;
 };
 
@@ -40,16 +41,23 @@ struct tree *makeTree(struct tree *root, struct tree *thisTree, char *data){
             printf("Não foi possível alocar memória!");
             exit(0);
         }
-        //Caso a subarvore ainda não exista ento é criada uma arvore nova a partir deste(a) Folha/Nó
+        //Caso a subarvore ainda não exista então é criada uma arvore nova a partir deste(a) Folha/Nó
         thisTree->left = NULL;
         thisTree->right = NULL;
+        thisTree->root = NULL;
         strcpy(thisTree->data, data);
         //Retorna a subarvore atual como Folha/Nó Raiz, caso ela mesma não possua Raiz
         if(!root) return thisTree;
         //Posiciona a subarvore atual a esquerda da raiz caso a string seja menor que a string da raiz
-        if(strcmp(data, root->data)<0) root->left = thisTree;
+        if(strcmp(data, root->data)<0){
+            root->left = thisTree;
+            thisTree->root = root;
+        }
         //Caso contrário posiciona a subarvore atual a direita da raiz
-        else root->right = thisTree;
+        else{
+            root->right = thisTree;
+            thisTree->root = root;
+        }
         return thisTree;
     }
     //Caso a já exista uma raiz são feitas as comparaçes para adicionar a subarvore no local correto
@@ -86,17 +94,62 @@ void printTree(struct tree *thisTree, int l){
     printf("%s\n", thisTree->data);
     printTree(thisTree->right, l+1);
 }
-
+/*Função que percorre a arvore procurando um nó que contém a string pesquisada
+ retorna NULL caso não encontre*/
 struct tree *searchInTree(struct tree *thisTree, char keySearch[sizeOfName]){
-    if (root == NULL || strcmp(keySearch ,root->data) == 0){
+    if (thisTree == NULL || strcmp(keySearch ,thisTree->data) == 0){
         return thisTree;
     }
-    if(strcmp(keySearch ,root->data) < 0){
+    if(strcmp(keySearch ,thisTree->data) < 0){
         return searchInTree(thisTree->left, keySearch);
     }else{
         return searchInTree(thisTree->right, keySearch);
     }
 }
+/*Função que retorna o menor nó da arvore*/
+struct tree *minimumNode(struct tree *thisTree){
+    while (thisTree->left != NULL){
+        thisTree=thisTree->left;
+    return thisTree;
+    }
+}
+/*Função que retorna o maior nó da arvore*/
+struct tree *maximumNode(struct tree *thisTree){
+    while (thisTree->right != NULL){
+        thisTree=thisTree->right;
+    return thisTree;
+    }
+}
+/*Função que retorna o sucessor de um nó da arvore*/
+struct tree *sucessorNode(struct tree *thisTree){
+    struct tree *root;
+    
+    if(thisTree->right != NULL){
+        return minimumNode(thisTree->right);
+    }
+    root=thisTree->root;
+    while(root != NULL && thisTree == root->left){
+        thisTree = root;
+        root = root->root;
+    }
+    return thisTree;
+}
+/*Função que retorna o antecessor de um nó da arvore*/
+struct tree *predecessorNode(struct tree *thisTree){
+    struct tree *root;
+    
+    if(thisTree->left != NULL){
+        return thisTree->left;
+    }
+    root=thisTree->root;
+    while(root != NULL && thisTree == root->right){
+        thisTree = root;
+        root = root->root;
+    }
+    return thisTree;
+}
+
+
 /*Função que equilibra uma subarvore*/
 void balanceTree(struct tree *root){
     
@@ -109,10 +162,10 @@ void main(void){
 
     root=NULL;
     do{
-        printf("Digite um nome ou 'quit' para sair:");
+        printf("Digite um nome ou '0' para sair:");
         scanf("%s", nome);
         if(!root) root=makeTree(root, root, nome);
         else makeTree(root, root, nome);
-    } while(strcmp(nome,"quit")!=0);
+    } while(strcmp(nome,"0")!=0);
     printTree(root, 0);
 }
